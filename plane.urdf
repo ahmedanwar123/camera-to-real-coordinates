@@ -1,0 +1,24 @@
+<robot name="plane">
+  <link name="plane_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0"/>  <!-- Mass is 0 because the plane is static -->
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="100 100 0.1"/>  <!-- Use a box instead of a plane -->
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>  <!-- Gray color -->
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="100 100 0.1"/>  <!-- Collision geometry matches visual geometry -->
+      </geometry>
+    </collision>
+  </link>
+</robot>

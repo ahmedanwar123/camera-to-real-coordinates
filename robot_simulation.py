@@ -14,10 +14,8 @@ class RobotSimulation:
         self.debug_lines: list = []
         self.target_position: np.ndarray = np.array([1.0, 1.0, 1.0])
 
-        # Create camera calibration instance
         calibrator = CameraCalibration()
 
-        # Set the camera matrix using the new intrinsic parameters
         fx = 3000  # Focal length in x (pixels)
         fy = 3000  # Focal length in y (pixels)
         cx = 2000  # Principal point x (pixels)
@@ -38,7 +36,7 @@ class RobotSimulation:
 
         if pixel_coords:
             # Convert to real world coordinates
-            distance = 2.0  # Increased distance for farther target
+            distance = 2.0 
             X, Y, Z = calibrator.pixel_to_world(pixel_coords, distance)
             self.target_position = np.array([X, Y, Z])
             print(f"Using detected target position: {self.target_position}")
@@ -111,7 +109,7 @@ class RobotSimulation:
         print(f"Target Position: {self.target_position}")
         print(f"Distance to Target: {distance}")
 
-        if distance > 0.05:  # Adjust threshold for stopping
+        if distance > 0.05:  # Stopping Threshold
             direction_normalized = normalize_vector(direction)
             velocity = direction_normalized * self.robot_speed
             p.resetBaseVelocity(
@@ -137,7 +135,7 @@ class RobotSimulation:
                 target_reached = self.move_robot_to_target()
                 self.update_debug_lines()
                 p.stepSimulation()
-                time.sleep(1.0 / 40.0)  # Slower simulation for visual clarity
+                time.sleep(1.0 / 40.0)
 
                 if step % 100 == 0:
                     pos, _ = p.getBasePositionAndOrientation(self.robotId)

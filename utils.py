@@ -58,4 +58,4 @@ def transform_coordinates(matrix: np.ndarray, vector: np.ndarray) -> np.ndarray:
     """
     homogeneous_vector = vector_to_homogeneous(vector)
     transformed = np.dot(matrix, homogeneous_vector)
-    return transformed[:2]  # return 2D point if 2D transformation
+    return transformed[:2]

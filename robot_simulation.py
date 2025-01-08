@@ -36,7 +36,7 @@ class RobotSimulation:
 
         if pixel_coords:
             # Convert to real world coordinates
-            distance = 2.0 
+            distance = 2.0
             X, Y, Z = calibrator.pixel_to_world(pixel_coords, distance)
             self.target_position = np.array([X, Y, Z])
             print(f"Using detected target position: {self.target_position}")

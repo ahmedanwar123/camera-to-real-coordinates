@@ -16,18 +16,9 @@ class RobotSimulation:
 
         calibrator = CameraCalibration()
 
-        fx = 3000  # Focal length in x (pixels)
-        fy = 3000  # Focal length in y (pixels)
-        cx = 2000  # Principal point x (pixels)
-        cy = 1500  # Principal point y (pixels)
-
-        calibrator.set_camera_intrinsics(fx, fy, cx, cy)
-
-        # Set the distortion coefficients with the new values
-        calibrator.dist_coeffs = np.array(
-            [
-                [-0.1, 0.01, 0.001, -0.001, 0.005]  # k1, k2, p1, p2, k3
-            ]
+        # Calibrate the camera using a chessboard image
+        calibrator.calibrate_camera_from_single_image(
+            "calibration_images/calib_result.jpg"
         )
 
         # Detect marker and get coordinates
@@ -101,17 +92,26 @@ class RobotSimulation:
         current_position, _ = p.getBasePositionAndOrientation(self.robotId)
         current_position = np.array(current_position)
 
-        direction = self.target_position - current_position
-        direction[2] = 0  # Ignore Z for horizontal movement
-        distance = calculate_distance(current_position, self.target_position)
+        # Extract X, Y, and Z coordinates for printing
+        current_xy = current_position[:2]  # Extract X and Y coordinates
+        current_z = current_position[2]  # Extract Z coordinate
+        target_xy = self.target_position[:2]  # Extract X and Y coordinates
+        target_z = self.target_position[2]  # Extract Z coordinate
 
-        print(f"Current Position: {current_position}")
-        print(f"Target Position: {self.target_position}")
+        # Calculate distance
+        direction = target_xy - current_xy
+        distance = np.linalg.norm(direction)
+
+        # Print current and target positions
+        print(f"Current Position: {current_xy} (Z: {current_z})")
+        print(f"Target Position: {target_xy} (Z: {current_z})")
         print(f"Distance to Target: {distance}")
 
         if distance > 0.05:  # Stopping Threshold
             direction_normalized = normalize_vector(direction)
-            velocity = direction_normalized * self.robot_speed
+            velocity = np.append(
+                direction_normalized * self.robot_speed, 0
+            )  # Set Z velocity to 0
             p.resetBaseVelocity(
                 self.robotId, linearVelocity=velocity, angularVelocity=[0, 0, 0]
             )
@@ -127,26 +127,30 @@ class RobotSimulation:
             print("Failed to set up simulation")
             return
 
-        print("Starting simulation - press Ctrl+C to stop")
+        print("Starting simulation")
         try:
             target_reached = False
             step = 0
-            while not target_reached and step < 5000:
+            while not target_reached and step < 3000:
                 target_reached = self.move_robot_to_target()
                 self.update_debug_lines()
                 p.stepSimulation()
-                time.sleep(1.0 / 40.0)
+                time.sleep(1.0 / 2500.0)
 
                 if step % 100 == 0:
                     pos, _ = p.getBasePositionAndOrientation(self.robotId)
-                    print(f"Step {step}: Robot position = {pos}")
+                    print(f"Step {step}: Robot position = {pos[:2]} (Z: {pos[2]})")
                     dist = np.linalg.norm(np.array(pos[:2]) - self.target_position[:2])
                     print(f"Distance to target: {dist:.3f}")
 
                 step += 1
 
             if target_reached:
-                print("Target reached successfully!")
+                print("|-------------------------------|")
+                print("|-------------------------------|")
+                print("  Target reached successfully !  ")
+                print("|-------------------------------|")
+                print("|-------------------------------|")
             else:
                 print("Simulation ended before reaching target")
 

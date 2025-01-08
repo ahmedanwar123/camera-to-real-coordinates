@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Optional
+from typing import Optional, Tuple, List  # noqa
 
 
 def normalize_vector(vector: np.ndarray) -> np.ndarray:

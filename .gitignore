@@ -2,4 +2,4 @@ __pycache__
 .vscode
 img-to-real
 calibration_images/*
-Ahmed_Anwar_Image-to-World_Coordinate_Transformation_for_Robotic_Applications.zip
+*.zip
